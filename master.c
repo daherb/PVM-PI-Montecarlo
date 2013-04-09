@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <gmp.h>
 #include <pvm3.h>
+#include <unordered_map>
 #define DIE 1
 #define DATA 2
 #define PER_HOST_TASK_COUNT 20
@@ -41,9 +42,8 @@ int main(void)
   pvm_config(&host_count,NULL,NULL);
   int task_count=host_count*PER_HOST_TASK_COUNT;
   // For the statistics
-  unsigned int statistics[task_count+1];
-  for (ct=0;ct<task_count;ct++)
-    statistics[ct]=0;
+  //  unsigned int statistics[task_count+1];
+  std::unordered_map<int,int> statistics;
   // Task-IDs
   int tids[task_count];
   int r=pvm_spawn((char *)"montecarlo_slave",NULL,PvmTaskDefault,NULL,task_count,tids);
@@ -52,6 +52,10 @@ int main(void)
     for(ct=0;ct<task_count;ct++)
       printf("Spawn error %d\n",tids[ct]);
   }
+  //  for (ct=0;ct<task_count;ct++)
+  //    statistics[ct]=0;
+  for (ct=0;ct<task_count;ct++)
+      statistics[tids[ct]]=0;
                                                
   // Init the arbitrary numbers  
   mpf_t hit;
@@ -84,7 +88,8 @@ int main(void)
     pvm_upkint(&tid,1,1);
     pvm_upkuint(&thit,1,1);
     pvm_upkuint(&ttotal,1,1);
-    statistics[tid-mytid-1]++;
+    //    statistics[tid-mytid-1]++;
+    statistics[tid]++;
 #ifdef DEBUG
     pvm_bufinfo(recbuf,&bsize,NULL,NULL);
     printf("Buffer size %d\n",bsize);
@@ -104,7 +109,7 @@ int main(void)
     gmp_printf("Total hits: %.*Ff\n",0,hit);
     gmp_printf("Approximation to Pi: %.*Ff\n\n",20,pi);
     for (ct=0;ct<task_count;ct++)     
-	printf("Host %d: %d tasks finished\n",ct,statistics[ct]);
+	printf("Host %d: %d tasks finished\n",ct,statistics[tids[ct]]);
 //    printf("\n\n\n\n\n");
     // Check for Sigint
     sigpending(&pending);
