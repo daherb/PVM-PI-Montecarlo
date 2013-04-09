@@ -10,14 +10,14 @@ master: master.c
 ifeq ($(ERROR),1)
 	@echo "Variable PVM_ROOT or PVM_ARCH not set -> Not building master"
 else
-	gcc -o montecarlo_master master.c -I ${PVM_ROOT}/include -I /usr/pkg/include -L ${PVM_ROOT}/lib/${PVM_ARCH}/ -lm -lpvm3 -lgmp -L /usr/pkg/lib -Wl,-R ${PVM_ROOT}/lib/${PVM_ARCH}
+	g++ -std=c++0x -o montecarlo_master master.c -I ${PVM_ROOT}/include -I /usr/pkg/include -L ${PVM_ROOT}/lib/${PVM_ARCH}/ -lm -lpvm3 -lgmp -L /usr/pkg/lib -Wl,-R ${PVM_ROOT}/lib/${PVM_ARCH}
 endif
 
 slave: slave.c
 ifeq ($(ERROR),1)
 	@echo "Variable PVM_ROOT or PVM_ARCH not set -> Not building slave"
 else
-	gcc -o montecarlo_slave slave.c -I ${PVM_ROOT}/include  -L ${PVM_ROOT}/lib/${PVM_ARCH}/ -lm -lpvm3 -DDEBUG -Wl,-R ${PVM_ROOT}/lib/${PVM_ARCH}
+	g++ -o montecarlo_slave slave.c -I ${PVM_ROOT}/include  -L ${PVM_ROOT}/lib/${PVM_ARCH}/ -lm -lpvm3 -DDEBUG -Wl,-R ${PVM_ROOT}/lib/${PVM_ARCH}
 endif
 	
 install:
