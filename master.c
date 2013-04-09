@@ -5,7 +5,7 @@
 #include <pvm3.h>
 #define DIE 1
 #define DATA 2
-
+#define PER_HOST_TASK_COUNT 20
 
 void clearscreen()
 {
@@ -39,9 +39,9 @@ int main(void)
   int mytid=pvm_mytid();
   int host_count;
   pvm_config(&host_count,NULL,NULL);
-  int task_count=host_count*3;
+  int task_count=host_count*PER_HOST_TASK_COUNT;
   // For the statistics
-  unsigned int statistics[task_count];
+  unsigned int statistics[task_count+1];
   for (ct=0;ct<task_count;ct++)
     statistics[ct]=0;
   // Task-IDs
